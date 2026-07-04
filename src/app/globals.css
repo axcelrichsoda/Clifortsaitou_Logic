@@ -1,0 +1,544 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html {
+  height: 100%;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+:root {
+  --panel-bg: #f7f7f8;
+  --panel-border: #dcdcdf;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --tile-red: #dc2626;
+  --tile-blue: #2563eb;
+  --tile-yellow: #eab308;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --panel-bg: #161618;
+    --panel-border: #2c2c30;
+  }
+}
+
+.page-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.text-input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+}
+
+.btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--panel-border);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: white;
+}
+
+.error-banner {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.room-code {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 1.6rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+/* Tiles */
+.tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 64px;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.tile-RED {
+  background: var(--tile-red);
+}
+
+.tile-BLUE {
+  background: var(--tile-blue);
+}
+
+.tile-YELLOW {
+  background: var(--tile-yellow);
+  color: #3a2c00;
+}
+
+.tile-placeholder {
+  background: transparent;
+  border: 2px dashed var(--panel-border);
+  color: var(--panel-border);
+}
+
+/* Number known, color not yet determined */
+.tile-UNKNOWN {
+  background: var(--panel-border);
+  color: var(--foreground);
+}
+
+.hand-display {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hand-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.hand-slot .position-label {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+/* Question board: fixed 3 columns so 6 open cards always form two even rows */
+.question-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .question-board {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+}
+
+.question-card {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  background: var(--background);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: left;
+  cursor: default;
+}
+
+.question-card.selectable {
+  cursor: pointer;
+  border-color: var(--accent);
+}
+
+.question-card.selectable:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.question-card.disabled {
+  opacity: 0.5;
+}
+
+.question-card .category-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--panel-border);
+  margin-bottom: 6px;
+}
+
+/* Question log: your questions (left) vs opponent's questions (right) */
+.question-log-columns {
+  display: flex;
+  gap: 16px;
+}
+
+.question-log-column {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.question-log-column-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.question-log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.question-log-entry {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--background);
+  border: 1px solid var(--panel-border);
+  font-size: 0.88rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Rules panel */
+.rules-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 14px 20px;
+}
+
+.rules-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.rules-panel ul {
+  margin-top: 10px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.rules-panel li {
+  list-style: disc;
+}
+
+/* Hands row: your hand + opponent tile-guess board side by side */
+.hands-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Hand panel (fixed 5 tiles) can stay narrow; the guess panel needs room for the
+   10-wide memo grid and 5 declare-slots (each widened by its 3 color tabs), so it
+   gets a larger share of the row. */
+.hands-row > .panel:first-child {
+  flex: 1 1 260px;
+}
+
+.hands-row > .panel:last-child {
+  flex: 1.8 1 460px;
+}
+
+/* Tile guess board (memo + declare slots) */
+.tile-guess-board {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.declare-slots {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.declare-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.declare-slot .color-tag {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.hint-text {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Clickable tiles (memo cells, guess-slot number cyclers) */
+button.tile {
+  border: none;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+button.tile:hover {
+  filter: brightness(1.1);
+}
+
+/* Memo grid: shared, game-long possibility tracker */
+.memo-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.memo-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.memo-cell {
+  width: 36px;
+  height: 48px;
+  font-size: 1.1rem;
+}
+
+.memo-cell.crossed {
+  opacity: 0.25;
+  filter: grayscale(0.7);
+  text-decoration: line-through;
+}
+
+/* Color tabs beneath a guess slot's number tile */
+.color-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.color-tab {
+  width: 22px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid var(--panel-border);
+  cursor: pointer;
+  opacity: 0.35;
+  padding: 0;
+}
+
+.color-tab-RED {
+  background: var(--tile-red);
+}
+
+.color-tab-BLUE {
+  background: var(--tile-blue);
+}
+
+.color-tab-UNKNOWN {
+  background: var(--panel-border);
+}
+
+.color-tab.active {
+  opacity: 1;
+  outline: 2px solid var(--foreground);
+  outline-offset: 1px;
+}
+
+/* Turn indicator */
+.turn-indicator {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--panel-border);
+  font-weight: 600;
+  text-align: center;
+}
+
+.turn-indicator.my-turn {
+  background: color-mix(in srgb, var(--success) 20%, transparent);
+  border: 1px solid var(--success);
+}
+
+/* Second chance banner */
+.second-chance-banner {
+  padding: 16px;
+  border-radius: 10px;
+  border: 2px solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Game over */
+.game-over-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  text-align: center;
+}
+
+.game-over-result {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.reveal-hands {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.reveal-hands h3 {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-content {
+  background: var(--background);
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 280px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.choice-options {
+  display: flex;
+  gap: 12px;
+}
+
+.deck-status {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
