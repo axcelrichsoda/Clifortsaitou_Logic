@@ -3,7 +3,10 @@ services:
     name: tagiron
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build
+    # --include=dev is required: NODE_ENV=production below makes plain `npm install`
+    # skip devDependencies (typescript, @types/*), but `next build` needs them present
+    # to run its build-time type check even though they're not needed at runtime.
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
