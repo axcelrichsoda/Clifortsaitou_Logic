@@ -14,7 +14,7 @@ app.prepare().then(() => {
 
   initSocketServer(httpServer);
 
-  httpServer.listen(port, () => {
+  httpServer.listen(port, '0.0.0.0', () => {
     console.log(`> Server listening at http://localhost:${port} as ${dev ? 'development' : process.env.NODE_ENV}`);
   });
 });

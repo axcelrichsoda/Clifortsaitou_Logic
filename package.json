@@ -9,6 +9,9 @@
     "lint": "eslint",
     "test": "vitest run"
   },
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "dependencies": {
     "nanoid": "^5.1.16",
     "next": "16.2.10",
@@ -16,6 +19,7 @@
     "react-dom": "19.2.4",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
+    "tsx": "^4.23.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -24,7 +28,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
-    "tsx": "^4.23.0",
     "typescript": "^5",
     "vitest": "^4.1.9"
   }
