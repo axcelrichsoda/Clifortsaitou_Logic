@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: tagiron
+    name: clifortsaitoulogical
     runtime: node
     plan: free
     # --include=dev is required: NODE_ENV=production below makes plain `npm install`
