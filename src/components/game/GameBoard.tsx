@@ -31,7 +31,7 @@ export function GameBoard({
   return (
     <div className="page-container">
       <RulesPanel />
-      <TurnIndicator isMyTurn={isMyTurn} phase={view.phase} />
+      <TurnIndicator isMyTurn={isMyTurn} phase={view.phase} yourRole={view.yourRole} />
       {spectatorCount > 0 && <p className="hint-text">観戦者: {spectatorCount}人</p>}
       {!view.opponentConnected && (
         <div className="error-banner">{view.opponentName} が切断中です。再接続をお待ちください。</div>
@@ -49,6 +49,7 @@ export function GameBoard({
             <div className="panel-title">{view.opponentName} の手札を予想する</div>
             <TileGuessBoard
               roomId={roomId}
+              yourRole={view.yourRole}
               onDeclare={onDeclare}
               canSubmit={isMyTurn}
               disabledHint="相手の番です。あなたの番になったら宣言できます。"

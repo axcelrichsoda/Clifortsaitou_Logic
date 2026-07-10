@@ -30,7 +30,7 @@ export function SecondChanceBanner({
     <div className="second-chance-banner">
       <strong>相手の宣言が的中しました。あなたに最終宣言のチャンスがあります!</strong>
       <p>ここで正解すれば引き分け、外すか放棄すると相手の勝利になります。</p>
-      <TileGuessBoard roomId={roomId} onDeclare={onDeclare} submitLabel="最終宣言する" canSubmit />
+      <TileGuessBoard roomId={roomId} yourRole={yourRole} onDeclare={onDeclare} submitLabel="最終宣言する" canSubmit />
       <button className="btn btn-danger" onClick={onForfeit}>
         最終宣言を放棄する
       </button>

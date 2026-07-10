@@ -500,6 +500,12 @@ button.tile:hover {
   border: 1px solid var(--success);
 }
 
+.turn-indicator.second-chance-urgent {
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
 /* Second chance banner */
 .second-chance-banner {
   padding: 16px;

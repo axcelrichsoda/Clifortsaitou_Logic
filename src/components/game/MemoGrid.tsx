@@ -1,16 +1,17 @@
 'use client';
 
+import type { PlayerRole } from '@/engine/gameState';
 import type { Color } from '@/engine/types';
 import { useMemoGrid } from '@/hooks/useMemoGrid';
 
 const NUMBERS = Array.from({ length: 10 }, (_, i) => i);
 const ROWS: readonly Color[] = ['RED', 'BLUE'];
 
-// A shared, game-long 0-9 x 2-color grid the player taps to cross out combinations they've
-// deduced are impossible. Number 5 only exists as YELLOW tiles, so it renders as YELLOW in
-// both rows (one cell per physical 5 tile) instead of RED/BLUE.
-export function MemoGrid({ roomId }: { roomId: string }) {
-  const { crossedOut, toggle } = useMemoGrid(roomId);
+// A game-long 0-9 x 2-color grid the player taps to cross out combinations they've deduced
+// are impossible. Number 5 only exists as YELLOW tiles, so it renders as YELLOW in both rows
+// (one cell per physical 5 tile) instead of RED/BLUE.
+export function MemoGrid({ roomId, yourRole }: { roomId: string; yourRole: PlayerRole }) {
+  const { crossedOut, toggle } = useMemoGrid(roomId, yourRole);
 
   return (
     <div className="memo-grid">

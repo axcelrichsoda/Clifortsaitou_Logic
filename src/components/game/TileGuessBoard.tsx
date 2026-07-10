@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import type { PlayerRole } from '@/engine/gameState';
 import type { Color } from '@/engine/types';
 import { isValidGuessSet } from '@/engine/declaration';
 import { Tile } from './Tile';
@@ -17,12 +18,14 @@ function defaultSlots(): Slot[] {
 
 export function TileGuessBoard({
   roomId,
+  yourRole,
   onDeclare,
   submitLabel = '宣言する',
   canSubmit,
   disabledHint,
 }: {
   roomId: string;
+  yourRole: PlayerRole;
   onDeclare: (guess: { number: number; color: Color }[]) => void;
   submitLabel?: string;
   canSubmit: boolean;
@@ -78,7 +81,7 @@ export function TileGuessBoard({
 
   return (
     <div className="tile-guess-board">
-      <MemoGrid roomId={roomId} />
+      <MemoGrid roomId={roomId} yourRole={yourRole} />
 
       <div className="declare-slots">
         {slots.map((slot, i) => (
