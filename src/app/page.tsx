@@ -17,7 +17,7 @@ export default function Home() {
 
   return (
     <div className="page-container">
-      <h1 className="page-title">TAGIRON オンライン対戦</h1>
+      <h1 className="page-title">クリフォート斎藤の理論 オンライン対戦</h1>
       <p>友人と2人でリアルタイム対戦できます。部屋を作るか、教えてもらった部屋コードで参加してください。</p>
       {error && (
         <div className="error-banner" onClick={clearError} role="button" tabIndex={0}>
