@@ -1,7 +1,7 @@
 import type { HistoryEntry, PlayerRole } from '@/engine/gameState';
 import { historyEntryRole } from '@/engine/gameState';
 import { QUESTION_CARDS } from '@/engine/questionCards';
-import { describeQuestion, formatAnswerValue } from '@/lib/formatAnswer';
+import { describeQuestion, formatAnswerValue, formatGuess } from '@/lib/formatAnswer';
 
 function isSharedEntry(entry: HistoryEntry): boolean {
   return entry.type === 'QUESTION' && QUESTION_CARDS[entry.cardId].category === 'SHARED';
@@ -11,7 +11,9 @@ function renderEntry(entry: HistoryEntry, key: number, askerLabel: string, targe
   if (entry.type === 'DECLARE') {
     return (
       <div className="question-log-entry question-log-entry-declare" key={key}>
-        <div>{askerLabel}が宣言しましたが外れました</div>
+        <div>
+          {askerLabel}が {formatGuess(entry.guess)} で宣言しましたが、外れました。
+        </div>
       </div>
     );
   }

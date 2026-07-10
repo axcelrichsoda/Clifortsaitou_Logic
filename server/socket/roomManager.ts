@@ -44,19 +44,26 @@ class RoomManager {
     return { room, playerToken };
   }
 
-  joinRoom(roomId: string, name: string, socketId: string): { room: RoomState; playerToken: string } {
+  joinRoom(roomId: string, name: string, socketId: string): { room: RoomState; playerToken: string; role: PlayerRole } {
     const room = this.rooms.get(roomId);
     if (!room) throw new Error('部屋が見つかりません');
     if (room.connections.length >= 2) throw new Error('この部屋は満員です');
     if (room.game) throw new Error('この部屋の対局は既に開始されています');
 
     const playerToken = nanoid();
-    room.connections.push({ playerToken, socketId, name, role: 'SECOND', connected: true });
-    room.game = createGame(
-      { id: room.connections[0].playerToken, name: room.connections[0].name },
-      { id: room.connections[1].playerToken, name: room.connections[1].name }
-    );
-    return { room, playerToken };
+    const creator = room.connections[0];
+    const joiner: RoomConnection = { playerToken, socketId, name, role: 'SECOND', connected: true };
+    // Randomize who goes first instead of always giving it to the room creator.
+    if (Math.random() < 0.5) {
+      creator.role = 'SECOND';
+      joiner.role = 'FIRST';
+    }
+    room.connections.push(joiner);
+
+    const first = room.connections.find((c) => c.role === 'FIRST')!;
+    const second = room.connections.find((c) => c.role === 'SECOND')!;
+    room.game = createGame({ id: first.playerToken, name: first.name }, { id: second.playerToken, name: second.name });
+    return { room, playerToken, role: joiner.role };
   }
 
   findByToken(roomId: string, playerToken: string): { room: RoomState; connection: RoomConnection } {

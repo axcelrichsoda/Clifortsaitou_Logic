@@ -1,6 +1,13 @@
 import type { PositionRange, QuestionAnswer } from '@/engine/questionResolvers';
 import type { QuestionLogEntry } from '@/engine/gameState';
 import { QUESTION_CARDS } from '@/engine/questionCards';
+import type { Color, Tile } from '@/engine/types';
+
+const COLOR_LABEL: Record<Color, string> = { RED: '赤', BLUE: '青', YELLOW: '黄' };
+
+export function formatGuess(guess: readonly Tile[]): string {
+  return guess.map((t) => `${COLOR_LABEL[t.color]}${t.number}`).join('・');
+}
 
 function formatPositions(positions: number[]): string {
   if (positions.length === 0) return '該当なし';

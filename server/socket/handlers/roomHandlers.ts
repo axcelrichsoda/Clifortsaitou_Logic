@@ -42,13 +42,13 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
       return;
     }
 
-    const { room, playerToken } = joined;
+    const { room, playerToken, role } = joined;
     const game = room.game!;
     socket.data.roomId = room.roomId;
     socket.data.playerToken = playerToken;
     socket.join(room.roomId);
 
-    socket.emit('room:joined', { roomId: room.roomId, playerToken, view: toPlayerView(game, 'SECOND') });
+    socket.emit('room:joined', { roomId: room.roomId, playerToken, view: toPlayerView(game, role) });
 
     for (const connection of room.connections) {
       if (connection.socketId) {

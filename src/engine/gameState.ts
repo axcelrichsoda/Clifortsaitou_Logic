@@ -33,6 +33,7 @@ export interface QuestionLogEntry {
 export interface DeclareLogEntry {
   type: 'DECLARE';
   declarerRole: PlayerRole;
+  guess: Tile[];
 }
 
 export type HistoryEntry = QuestionLogEntry | DeclareLogEntry;
@@ -131,7 +132,9 @@ export function declare(state: GameState, role: PlayerRole, guess: readonly Tile
     return {
       ...state,
       phase: 'FINISHED',
-      history: correct ? state.history : [...state.history, { type: 'DECLARE', declarerRole: role }],
+      history: correct
+        ? state.history
+        : [...state.history, { type: 'DECLARE', declarerRole: role, guess: [...guess] }],
       result: correct
         ? { type: 'DRAW', reason: 'BOTH_CORRECT' }
         : { type: 'WIN', winner: 'FIRST', reason: 'SECOND_CHANCE_FAILED' },
@@ -143,7 +146,11 @@ export function declare(state: GameState, role: PlayerRole, guess: readonly Tile
   const correct = checkDeclaration(guess, state.players[target].hand);
 
   if (!correct) {
-    return { ...state, currentTurn: target, history: [...state.history, { type: 'DECLARE', declarerRole: role }] };
+    return {
+      ...state,
+      currentTurn: target,
+      history: [...state.history, { type: 'DECLARE', declarerRole: role, guess: [...guess] }],
+    };
   }
 
   if (role === 'FIRST') {

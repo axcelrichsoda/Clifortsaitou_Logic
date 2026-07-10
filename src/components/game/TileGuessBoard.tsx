@@ -4,17 +4,9 @@ import { useMemo, useState } from 'react';
 import type { PlayerRole } from '@/engine/gameState';
 import type { Color } from '@/engine/types';
 import { isValidGuessSet } from '@/engine/declaration';
+import { useDeclareSlots } from '@/hooks/useDeclareSlots';
 import { Tile } from './Tile';
 import { MemoGrid } from './MemoGrid';
-
-interface Slot {
-  number: number;
-  color: Color | null; // null = color not yet determined ("不明")
-}
-
-function defaultSlots(): Slot[] {
-  return Array.from({ length: 5 }, () => ({ number: 0, color: null as Color | null }));
-}
 
 export function TileGuessBoard({
   roomId,
@@ -31,7 +23,7 @@ export function TileGuessBoard({
   canSubmit: boolean;
   disabledHint?: string;
 }) {
-  const [slots, setSlots] = useState<Slot[]>(defaultSlots);
+  const [slots, setSlots] = useDeclareSlots(roomId, yourRole);
   const [confirming, setConfirming] = useState(false);
 
   const allColorsKnown = slots.every((s) => s.color !== null);
