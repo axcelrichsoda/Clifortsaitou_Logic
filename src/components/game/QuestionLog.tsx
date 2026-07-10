@@ -1,7 +1,15 @@
-import type { PlayerRole, QuestionLogEntry } from '@/engine/gameState';
+import type { HistoryEntry, PlayerRole } from '@/engine/gameState';
+import { historyEntryRole } from '@/engine/gameState';
 import { describeQuestion, formatAnswerValue } from '@/lib/formatAnswer';
 
-function renderEntry(entry: QuestionLogEntry, key: number, askerLabel: string, targetLabel: string) {
+function renderEntry(entry: HistoryEntry, key: number, askerLabel: string, targetLabel: string) {
+  if (entry.type === 'DECLARE') {
+    return (
+      <div className="question-log-entry question-log-entry-declare" key={key}>
+        <div>{askerLabel}が宣言しましたが外れました</div>
+      </div>
+    );
+  }
   return (
     <div className="question-log-entry" key={key}>
       <div>{describeQuestion(entry)}</div>
@@ -16,13 +24,13 @@ export function QuestionLog({
   yourName,
   opponentName,
 }: {
-  history: QuestionLogEntry[];
+  history: HistoryEntry[];
   yourRole: PlayerRole;
   yourName: string;
   opponentName: string;
 }) {
-  const yourEntries = [...history].reverse().filter((e) => e.askerRole === yourRole);
-  const opponentEntries = [...history].reverse().filter((e) => e.askerRole !== yourRole);
+  const yourEntries = [...history].reverse().filter((e) => historyEntryRole(e) === yourRole);
+  const opponentEntries = [...history].reverse().filter((e) => historyEntryRole(e) !== yourRole);
 
   return (
     <div>

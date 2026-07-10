@@ -26,6 +26,7 @@ export function GameBoard({
   onForfeitSecondChance: () => void;
 }) {
   const isMyTurn = view.phase === 'IN_PROGRESS' && view.currentTurn === view.yourRole;
+  const lastEntry = view.history[view.history.length - 1];
 
   return (
     <div className="page-container">
@@ -34,6 +35,11 @@ export function GameBoard({
       {spectatorCount > 0 && <p className="hint-text">観戦者: {spectatorCount}人</p>}
       {!view.opponentConnected && (
         <div className="error-banner">{view.opponentName} が切断中です。再接続をお待ちください。</div>
+      )}
+      {lastEntry?.type === 'DECLARE' && (
+        <div className="declare-miss-banner">
+          {lastEntry.declarerRole === view.yourRole ? 'あなたの宣言は違います。' : `${view.opponentName} の宣言は違います。`}
+        </div>
       )}
 
       <div className="hands-row">

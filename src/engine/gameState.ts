@@ -20,10 +20,25 @@ export interface PlayerState {
 }
 
 export interface QuestionLogEntry {
+  type: 'QUESTION';
   cardId: QuestionCardId;
   subChoice?: number;
   askerRole: PlayerRole;
   answer: QuestionAnswer;
+}
+
+// Recorded whenever a declaration misses, so the question log can show that a declaration
+// happened even though it didn't end the game (a correct declaration is already obvious from
+// the resulting phase change / game-over screen, so only misses need a log entry).
+export interface DeclareLogEntry {
+  type: 'DECLARE';
+  declarerRole: PlayerRole;
+}
+
+export type HistoryEntry = QuestionLogEntry | DeclareLogEntry;
+
+export function historyEntryRole(entry: HistoryEntry): PlayerRole {
+  return entry.type === 'QUESTION' ? entry.askerRole : entry.declarerRole;
 }
 
 export type GameResult =
@@ -35,7 +50,7 @@ export interface GameState {
   players: Record<PlayerRole, PlayerState>;
   currentTurn: PlayerRole;
   questionDeck: QuestionDeckState;
-  history: QuestionLogEntry[];
+  history: HistoryEntry[];
   result?: GameResult;
 }
 
@@ -84,7 +99,7 @@ export function askQuestion(
   const answer = resolveQuestion(cardId, state.players[role].hand, state.players[target].hand, subChoice);
   const { deck, exhausted } = consumeQuestionCard(state.questionDeck, cardId);
 
-  const historyEntry: QuestionLogEntry = { cardId, subChoice, askerRole: role, answer };
+  const historyEntry: QuestionLogEntry = { type: 'QUESTION', cardId, subChoice, askerRole: role, answer };
 
   if (exhausted) {
     return {
@@ -116,6 +131,7 @@ export function declare(state: GameState, role: PlayerRole, guess: readonly Tile
     return {
       ...state,
       phase: 'FINISHED',
+      history: correct ? state.history : [...state.history, { type: 'DECLARE', declarerRole: role }],
       result: correct
         ? { type: 'DRAW', reason: 'BOTH_CORRECT' }
         : { type: 'WIN', winner: 'FIRST', reason: 'SECOND_CHANCE_FAILED' },
@@ -127,7 +143,7 @@ export function declare(state: GameState, role: PlayerRole, guess: readonly Tile
   const correct = checkDeclaration(guess, state.players[target].hand);
 
   if (!correct) {
-    return { ...state, currentTurn: target };
+    return { ...state, currentTurn: target, history: [...state.history, { type: 'DECLARE', declarerRole: role }] };
   }
 
   if (role === 'FIRST') {

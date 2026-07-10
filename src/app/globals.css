@@ -162,6 +162,16 @@ a {
   font-size: 0.9rem;
 }
 
+.declare-miss-banner {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
 .room-code {
   font-family: var(--font-geist-mono), monospace;
   font-size: 1.6rem;
@@ -310,6 +320,12 @@ a {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.question-log-entry-declare {
+  border-color: var(--danger);
+  color: var(--danger);
+  font-weight: 600;
 }
 
 /* Rules panel */

@@ -9,6 +9,7 @@ function noop() {
 
 export function SpectatorBoard({ view }: { view: SpectatorView }) {
   const turnName = view.currentTurn === 'FIRST' ? view.firstName : view.secondName;
+  const lastEntry = view.history[view.history.length - 1];
 
   return (
     <div className="page-container">
@@ -17,6 +18,11 @@ export function SpectatorBoard({ view }: { view: SpectatorView }) {
 
       {!view.firstConnected && <div className="error-banner">{view.firstName} が切断中です。</div>}
       {!view.secondConnected && <div className="error-banner">{view.secondName} が切断中です。</div>}
+      {lastEntry?.type === 'DECLARE' && (
+        <div className="declare-miss-banner">
+          {(lastEntry.declarerRole === 'FIRST' ? view.firstName : view.secondName)} の宣言は違います。
+        </div>
+      )}
 
       {view.phase === 'AWAITING_SECOND_CHANCE' && (
         <div className="second-chance-banner">

@@ -1,5 +1,5 @@
 import type { Hand } from './types';
-import type { GameState, GameResult, Phase, PlayerRole, QuestionLogEntry } from './gameState';
+import type { GameState, GameResult, Phase, PlayerRole, HistoryEntry } from './gameState';
 import type { QuestionCardId } from './questionCards';
 
 // The server-authoritative view sent to one specific player: it must never include the
@@ -15,7 +15,7 @@ export interface GameStateView {
   openCards: QuestionCardId[];
   drawPileCount: number;
   discardPileCount: number;
-  history: QuestionLogEntry[];
+  history: HistoryEntry[];
   result?: GameResult;
   opponentHand?: Hand;
 }
@@ -57,7 +57,7 @@ export interface SpectatorView {
   openCards: QuestionCardId[];
   drawPileCount: number;
   discardPileCount: number;
-  history: QuestionLogEntry[];
+  history: HistoryEntry[];
   result?: GameResult;
   firstHand?: Hand;
   secondHand?: Hand;
