@@ -303,6 +303,16 @@ a {
   opacity: 0.8;
 }
 
+/* Shared-category questions (reveal both hands) get their own block below the columns */
+.question-log-shared {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .question-log {
   display: flex;
   flex-direction: column;

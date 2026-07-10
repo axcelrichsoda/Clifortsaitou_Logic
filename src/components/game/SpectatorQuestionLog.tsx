@@ -1,6 +1,11 @@
 import type { HistoryEntry, PlayerRole } from '@/engine/gameState';
 import { historyEntryRole } from '@/engine/gameState';
+import { QUESTION_CARDS } from '@/engine/questionCards';
 import { describeQuestion, formatAnswerValue } from '@/lib/formatAnswer';
+
+function isSharedEntry(entry: HistoryEntry): boolean {
+  return entry.type === 'QUESTION' && QUESTION_CARDS[entry.cardId].category === 'SHARED';
+}
 
 function renderEntry(entry: HistoryEntry, key: number, askerLabel: string, targetLabel: string) {
   if (entry.type === 'DECLARE') {
@@ -28,8 +33,10 @@ export function SpectatorQuestionLog({
   secondName: string;
 }) {
   const nameOf = (role: PlayerRole) => (role === 'FIRST' ? firstName : secondName);
-  const firstEntries = [...history].reverse().filter((e) => historyEntryRole(e) === 'FIRST');
-  const secondEntries = [...history].reverse().filter((e) => historyEntryRole(e) === 'SECOND');
+  const personalHistory = history.filter((e) => !isSharedEntry(e));
+  const firstEntries = [...personalHistory].reverse().filter((e) => historyEntryRole(e) === 'FIRST');
+  const secondEntries = [...personalHistory].reverse().filter((e) => historyEntryRole(e) === 'SECOND');
+  const sharedEntries = [...history].reverse().filter(isSharedEntry);
 
   return (
     <div>
@@ -48,6 +55,16 @@ export function SpectatorQuestionLog({
             {secondEntries.length === 0 && <p className="hint-text">まだ質問がありません。</p>}
             {secondEntries.map((entry, i) => renderEntry(entry, i, nameOf(historyEntryRole(entry)), firstName))}
           </div>
+        </div>
+      </div>
+      <div className="question-log-shared">
+        <div className="question-log-column-title">共有情報</div>
+        <div className="question-log">
+          {sharedEntries.length === 0 && <p className="hint-text">まだ共有情報の質問がありません。</p>}
+          {sharedEntries.map((entry, i) => {
+            const askerRole = historyEntryRole(entry);
+            return renderEntry(entry, i, nameOf(askerRole), askerRole === 'FIRST' ? secondName : firstName);
+          })}
         </div>
       </div>
     </div>
