@@ -338,6 +338,12 @@ a {
   font-weight: 600;
 }
 
+.question-log-entry-correct {
+  border-color: var(--success);
+  color: var(--success);
+  font-weight: 600;
+}
+
 /* Rules panel */
 .rules-panel {
   background: var(--panel-bg);

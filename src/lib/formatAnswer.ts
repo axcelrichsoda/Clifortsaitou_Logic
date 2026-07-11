@@ -1,6 +1,5 @@
 import type { PositionRange, QuestionAnswer } from '@/engine/questionResolvers';
-import type { QuestionLogEntry } from '@/engine/gameState';
-import { QUESTION_CARDS } from '@/engine/questionCards';
+import { QUESTION_CARDS, type QuestionCardId } from '@/engine/questionCards';
 import type { Color, Tile } from '@/engine/types';
 
 const COLOR_LABEL: Record<Color, string> = { RED: '赤', BLUE: '青', YELLOW: '黄' };
@@ -41,7 +40,7 @@ export function formatAnswerValue(answer: QuestionAnswer, askerLabel: string, ta
   }
 }
 
-export function describeQuestion(entry: QuestionLogEntry): string {
+export function describeQuestion(entry: { cardId: QuestionCardId; subChoice?: number }): string {
   const def = QUESTION_CARDS[entry.cardId];
   if (def.category === 'CHOICE' && entry.subChoice !== undefined) {
     return `${def.label}(選択: ${entry.subChoice})`;

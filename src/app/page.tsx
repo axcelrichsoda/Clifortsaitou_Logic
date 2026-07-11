@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useGameState } from '@/hooks/useGameState';
 import { CreateRoomForm } from '@/components/lobby/CreateRoomForm';
@@ -27,6 +28,16 @@ export default function Home() {
       <CreateRoomForm />
       <JoinRoomForm />
       <SpectateForm />
+
+      <div className="panel">
+        <div className="panel-title">一人用練習モード</div>
+        <p className="hint-text">
+          相手なしで、ランダムな手札を推理する練習ができます。ターンや持ち時間はありません。
+        </p>
+        <Link href="/practice" className="btn">
+          練習を始める
+        </Link>
+      </div>
     </div>
   );
 }

@@ -2,13 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { askQuestion, createGame, declare, forfeitSecondChance, handleTimeout, type GameState } from '../gameState';
 import { QUESTION_CARDS, type QuestionCardId } from '../questionCards';
 
-function newGame(seed = 1): GameState {
+function seededRng(seed: number): () => number {
   let s = seed;
-  const rng = () => {
+  return () => {
     s = (s * 9301 + 49297) % 233280;
     return s / 233280;
   };
-  return createGame({ id: 'p1', name: 'Alice' }, { id: 'p2', name: 'Bob' }, rng);
+}
+
+function newGame(seed = 1): GameState {
+  return createGame({ id: 'p1', name: 'Alice' }, { id: 'p2', name: 'Bob' }, seededRng(seed));
 }
 
 function askAnyOpenCard(state: GameState, role: 'FIRST' | 'SECOND'): GameState {
@@ -160,7 +163,7 @@ describe('turn timeout', () => {
   it('resets turnStartedAt whenever the active turn changes', () => {
     let now = 1000;
     const clock = () => now;
-    let game = createGame({ id: 'p1', name: 'Alice' }, { id: 'p2', name: 'Bob' }, Math.random, clock);
+    let game = createGame({ id: 'p1', name: 'Alice' }, { id: 'p2', name: 'Bob' }, seededRng(1), clock);
     expect(game.turnStartedAt).toBe(1000);
 
     now = 2000;
