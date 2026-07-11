@@ -506,6 +506,20 @@ button.tile:hover {
   color: var(--danger);
 }
 
+.turn-timer {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.turn-timer.turn-timer-urgent {
+  color: var(--danger);
+  font-weight: 700;
+  opacity: 1;
+}
+
 /* Second chance banner */
 .second-chance-banner {
   padding: 16px;

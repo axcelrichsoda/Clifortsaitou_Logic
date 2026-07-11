@@ -18,6 +18,7 @@ export interface GameStateView {
   history: HistoryEntry[];
   result?: GameResult;
   opponentHand?: Hand;
+  turnStartedAt: number;
 }
 
 function otherRole(role: PlayerRole): PlayerRole {
@@ -42,6 +43,7 @@ export function toPlayerView(game: GameState, viewerRole: PlayerRole): GameState
     history: game.history,
     result: game.result,
     opponentHand: game.phase === 'FINISHED' ? opponent.hand : undefined,
+    turnStartedAt: game.turnStartedAt,
   };
 }
 
@@ -61,6 +63,7 @@ export interface SpectatorView {
   result?: GameResult;
   firstHand?: Hand;
   secondHand?: Hand;
+  turnStartedAt: number;
 }
 
 export function toSpectatorView(game: GameState): SpectatorView {
@@ -79,5 +82,6 @@ export function toSpectatorView(game: GameState): SpectatorView {
     result: game.result,
     firstHand: finished ? game.players.FIRST.hand : undefined,
     secondHand: finished ? game.players.SECOND.hand : undefined,
+    turnStartedAt: game.turnStartedAt,
   };
 }

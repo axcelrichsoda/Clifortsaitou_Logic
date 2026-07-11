@@ -9,7 +9,8 @@ function resultText(view: GameStateView): string {
       : '質問カードが尽きたため、引き分けです。';
   }
   const youWon = view.result.winner === view.yourRole;
-  return youWon ? 'あなたの勝利です!' : `${view.opponentName} の勝利です。`;
+  const prefix = view.result.reason === 'TIMEOUT' ? '持ち時間切れのため、' : '';
+  return youWon ? `${prefix}あなたの勝利です!` : `${prefix}${view.opponentName} の勝利です。`;
 }
 
 export function GameOverScreen({ view, onBackToLobby }: { view: GameStateView; onBackToLobby: () => void }) {

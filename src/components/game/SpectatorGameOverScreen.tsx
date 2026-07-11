@@ -9,7 +9,8 @@ function resultText(view: SpectatorView): string {
       : '質問カードが尽きたため、引き分けです。';
   }
   const winnerName = view.result.winner === 'FIRST' ? view.firstName : view.secondName;
-  return `${winnerName} の勝利です。`;
+  const prefix = view.result.reason === 'TIMEOUT' ? '持ち時間切れのため、' : '';
+  return `${prefix}${winnerName} の勝利です。`;
 }
 
 export function SpectatorGameOverScreen({ view, onBackToLobby }: { view: SpectatorView; onBackToLobby: () => void }) {

@@ -3,6 +3,7 @@ import type { QuestionCardId } from '@/engine/questionCards';
 import { toPlayerView, toSpectatorView } from '@/engine/gameView';
 import { roomManager, type RoomConnection, type RoomState } from '../roomManager';
 import { askQuestionSchema, declareSchema } from '../types/socketEvents';
+import { scheduleTurnTimeout } from '../turnTimer';
 import type { TypedServer, TypedSocket } from '../index';
 
 function errorMessage(err: unknown, fallback: string): string {
@@ -57,6 +58,7 @@ export function registerGameHandlers(io: TypedServer, socket: TypedSocket): void
       return;
     }
     room.game = next;
+    scheduleTurnTimeout(io, room);
 
     for (const conn of room.connections) {
       if (conn.socketId) {
@@ -92,6 +94,7 @@ export function registerGameHandlers(io: TypedServer, socket: TypedSocket): void
       return;
     }
     room.game = next;
+    scheduleTurnTimeout(io, room);
 
     // An incorrect declaration during normal play just passes the turn (phase stays IN_PROGRESS);
     // any other transition (AWAITING_SECOND_CHANCE / FINISHED) means this declaration was correct.
@@ -131,6 +134,7 @@ export function registerGameHandlers(io: TypedServer, socket: TypedSocket): void
       return;
     }
     room.game = next;
+    scheduleTurnTimeout(io, room);
     broadcastToSpectators(io, room, next);
     broadcastGameOver(io, room, next);
   });

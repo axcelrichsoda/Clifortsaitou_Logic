@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { askQuestion, createGame, declare, forfeitSecondChance, type GameState } from '../gameState';
+import { askQuestion, createGame, declare, forfeitSecondChance, handleTimeout, type GameState } from '../gameState';
 import { QUESTION_CARDS, type QuestionCardId } from '../questionCards';
 
 function newGame(seed = 1): GameState {
@@ -119,6 +119,69 @@ describe('declaration outcomes', () => {
   it('rejects a structurally invalid guess (wrong length)', () => {
     const game = newGame();
     expect(() => declare(game, 'FIRST', game.players.SECOND.hand.slice(0, 4))).toThrow();
+  });
+});
+
+describe('turn timeout', () => {
+  it('ends the game with the other player winning when the active turn player times out', () => {
+    const game = newGame();
+    const next = handleTimeout(game, 'FIRST');
+    expect(next.phase).toBe('FINISHED');
+    expect(next.result).toEqual({ type: 'WIN', winner: 'SECOND', reason: 'TIMEOUT' });
+  });
+
+  it('ends the game with FIRST winning when SECOND times out on the final declaration', () => {
+    let game = newGame();
+    game = declare(game, 'FIRST', game.players.SECOND.hand);
+    expect(game.phase).toBe('AWAITING_SECOND_CHANCE');
+    const next = handleTimeout(game, 'SECOND');
+    expect(next.phase).toBe('FINISHED');
+    expect(next.result).toEqual({ type: 'WIN', winner: 'FIRST', reason: 'TIMEOUT' });
+  });
+
+  it('rejects a timeout for a role that is not actually on the clock', () => {
+    const game = newGame();
+    expect(() => handleTimeout(game, 'SECOND')).toThrow();
+  });
+
+  it('rejects FIRST timing out during the final-declaration window (only SECOND is on the clock)', () => {
+    let game = newGame();
+    game = declare(game, 'FIRST', game.players.SECOND.hand);
+    expect(() => handleTimeout(game, 'FIRST')).toThrow();
+  });
+
+  it('rejects timing out a finished game', () => {
+    let game = newGame();
+    game = declare(game, 'FIRST', game.players.SECOND.hand);
+    game = forfeitSecondChance(game, 'SECOND');
+    expect(() => handleTimeout(game, 'FIRST')).toThrow();
+  });
+
+  it('resets turnStartedAt whenever the active turn changes', () => {
+    let now = 1000;
+    const clock = () => now;
+    let game = createGame({ id: 'p1', name: 'Alice' }, { id: 'p2', name: 'Bob' }, Math.random, clock);
+    expect(game.turnStartedAt).toBe(1000);
+
+    now = 2000;
+    const cardId = game.questionDeck.open[0] as QuestionCardId;
+    const def = QUESTION_CARDS[cardId];
+    const subChoice = def.category === 'CHOICE' ? def.choices?.[0] : undefined;
+    game = askQuestion(game, 'FIRST', cardId, subChoice, clock);
+    expect(game.turnStartedAt).toBe(2000);
+
+    now = 3000;
+    const wrongGuess = game.players.FIRST.hand.map((t, i) =>
+      i === 0 ? { number: (t.number + 1) % 10 === 5 ? 6 : (t.number + 1) % 10, color: t.color } : t
+    );
+    game = declare(game, 'SECOND', wrongGuess, clock);
+    expect(game.phase).toBe('IN_PROGRESS');
+    expect(game.turnStartedAt).toBe(3000);
+
+    now = 4000;
+    game = declare(game, 'FIRST', game.players.SECOND.hand, clock);
+    expect(game.phase).toBe('AWAITING_SECOND_CHANCE');
+    expect(game.turnStartedAt).toBe(4000);
   });
 });
 

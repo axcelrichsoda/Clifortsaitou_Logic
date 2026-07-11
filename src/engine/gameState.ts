@@ -43,8 +43,11 @@ export function historyEntryRole(entry: HistoryEntry): PlayerRole {
 }
 
 export type GameResult =
-  | { type: 'WIN'; winner: PlayerRole; reason: 'DECLARE_CORRECT' | 'SECOND_CHANCE_FAILED' }
+  | { type: 'WIN'; winner: PlayerRole; reason: 'DECLARE_CORRECT' | 'SECOND_CHANCE_FAILED' | 'TIMEOUT' }
   | { type: 'DRAW'; reason: 'BOTH_CORRECT' | 'DECK_EXHAUSTED' };
+
+// How long a player has to act (ask or declare) on their turn before they lose by timeout.
+export const TURN_TIME_LIMIT_MS = 3 * 60 * 1000;
 
 export interface GameState {
   phase: Phase;
@@ -53,12 +56,16 @@ export interface GameState {
   questionDeck: QuestionDeckState;
   history: HistoryEntry[];
   result?: GameResult;
+  // When the current turn (or, during AWAITING_SECOND_CHANCE, SECOND's final declaration) started.
+  // Whoever is "on the clock" loses by timeout if they don't act within TURN_TIME_LIMIT_MS.
+  turnStartedAt: number;
 }
 
 export function createGame(
   firstPlayer: { id: string; name: string },
   secondPlayer: { id: string; name: string },
-  rng: () => number = Math.random
+  rng: () => number = Math.random,
+  now: () => number = Date.now
 ): GameState {
   const { firstHand, secondHand } = dealTiles(rng);
   return {
@@ -70,6 +77,7 @@ export function createGame(
     currentTurn: 'FIRST',
     questionDeck: initQuestionDeck(rng),
     history: [],
+    turnStartedAt: now(),
   };
 }
 
@@ -81,7 +89,8 @@ export function askQuestion(
   state: GameState,
   role: PlayerRole,
   cardId: QuestionCardId,
-  subChoice?: number
+  subChoice?: number,
+  now: () => number = Date.now
 ): GameState {
   if (state.phase !== 'IN_PROGRESS') throw new Error('Questions can only be asked while a game is in progress');
   if (state.currentTurn !== role) throw new Error('Not your turn');
@@ -117,10 +126,16 @@ export function askQuestion(
     questionDeck: deck,
     history: [...state.history, historyEntry],
     currentTurn: target,
+    turnStartedAt: now(),
   };
 }
 
-export function declare(state: GameState, role: PlayerRole, guess: readonly Tile[]): GameState {
+export function declare(
+  state: GameState,
+  role: PlayerRole,
+  guess: readonly Tile[],
+  now: () => number = Date.now
+): GameState {
   if (state.phase !== 'IN_PROGRESS' && state.phase !== 'AWAITING_SECOND_CHANCE') {
     throw new Error('Declarations can only be made while a game is in progress');
   }
@@ -150,11 +165,12 @@ export function declare(state: GameState, role: PlayerRole, guess: readonly Tile
       ...state,
       currentTurn: target,
       history: [...state.history, { type: 'DECLARE', declarerRole: role, guess: [...guess] }],
+      turnStartedAt: now(),
     };
   }
 
   if (role === 'FIRST') {
-    return { ...state, phase: 'AWAITING_SECOND_CHANCE', currentTurn: 'SECOND' };
+    return { ...state, phase: 'AWAITING_SECOND_CHANCE', currentTurn: 'SECOND', turnStartedAt: now() };
   }
 
   return { ...state, phase: 'FINISHED', result: { type: 'WIN', winner: 'SECOND', reason: 'DECLARE_CORRECT' } };
@@ -168,4 +184,19 @@ export function forfeitSecondChance(state: GameState, role: PlayerRole): GameSta
     phase: 'FINISHED',
     result: { type: 'WIN', winner: 'FIRST', reason: 'SECOND_CHANCE_FAILED' },
   };
+}
+
+// Ends the game because `role` failed to act (ask/declare) within TURN_TIME_LIMIT_MS.
+// `role` must be whoever is currently "on the clock": the active turn during IN_PROGRESS,
+// or SECOND during their one-shot final declaration window.
+export function handleTimeout(state: GameState, role: PlayerRole): GameState {
+  if (state.phase === 'IN_PROGRESS') {
+    if (state.currentTurn !== role) throw new Error('It is not this player\'s turn to time out');
+    return { ...state, phase: 'FINISHED', result: { type: 'WIN', winner: otherRole(role), reason: 'TIMEOUT' } };
+  }
+  if (state.phase === 'AWAITING_SECOND_CHANCE') {
+    if (role !== 'SECOND') throw new Error("Only the second player's final declaration can time out");
+    return { ...state, phase: 'FINISHED', result: { type: 'WIN', winner: 'FIRST', reason: 'TIMEOUT' } };
+  }
+  throw new Error('No active turn to time out');
 }

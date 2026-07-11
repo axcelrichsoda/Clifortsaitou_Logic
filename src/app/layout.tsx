@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "クリフォート斎藤の理論 オンライン対戦",
+  title: "クリフォート齋藤の理論 オンライン対戦",
   description: "友人と2人でリアルタイム対戦できるタギロンのWeb版",
 };
 

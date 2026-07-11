@@ -8,6 +8,7 @@ import { QuestionLog } from './QuestionLog';
 import { RulesPanel } from './RulesPanel';
 import { TileGuessBoard } from './TileGuessBoard';
 import { TurnIndicator } from './TurnIndicator';
+import { TurnTimer } from './TurnTimer';
 import { SecondChanceBanner } from './SecondChanceBanner';
 
 export function GameBoard({
@@ -32,6 +33,7 @@ export function GameBoard({
     <div className="page-container">
       <RulesPanel />
       <TurnIndicator isMyTurn={isMyTurn} phase={view.phase} yourRole={view.yourRole} />
+      <TurnTimer turnStartedAt={view.turnStartedAt} />
       {spectatorCount > 0 && <p className="hint-text">観戦者: {spectatorCount}人</p>}
       {!view.opponentConnected && (
         <div className="error-banner">{view.opponentName} が切断中です。再接続をお待ちください。</div>

@@ -24,6 +24,7 @@ export interface RoomState {
   spectators: SpectatorConnection[];
   game?: GameState;
   disconnectTimer?: ReturnType<typeof setTimeout>;
+  turnTimer?: ReturnType<typeof setTimeout>;
 }
 
 const DISCONNECT_GRACE_MS = 5 * 60 * 1000;
@@ -98,6 +99,7 @@ class RoomManager {
     if (room.game) room.game.players[connection.role].connected = false;
     if (room.connections.every((c) => !c.connected)) {
       room.disconnectTimer = setTimeout(() => {
+        if (room.turnTimer) clearTimeout(room.turnTimer);
         this.rooms.delete(room.roomId);
       }, DISCONNECT_GRACE_MS);
     }

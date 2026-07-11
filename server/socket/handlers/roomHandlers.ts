@@ -1,6 +1,7 @@
 import { toPlayerView, toSpectatorView } from '@/engine/gameView';
 import { roomManager } from '../roomManager';
 import { roomCreateSchema, roomJoinSchema, roomRejoinSchema, type RoomOrGameView } from '../types/socketEvents';
+import { scheduleTurnTimeout } from '../turnTimer';
 import type { TypedServer, TypedSocket } from '../index';
 
 function errorMessage(err: unknown, fallback: string): string {
@@ -47,6 +48,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
     socket.data.roomId = room.roomId;
     socket.data.playerToken = playerToken;
     socket.join(room.roomId);
+    scheduleTurnTimeout(io, room);
 
     socket.emit('room:joined', { roomId: room.roomId, playerToken, view: toPlayerView(game, role) });
 

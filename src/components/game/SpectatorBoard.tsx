@@ -2,6 +2,7 @@ import type { SpectatorView } from '@/engine/gameView';
 import { QuestionBoard } from './QuestionBoard';
 import { RulesPanel } from './RulesPanel';
 import { SpectatorQuestionLog } from './SpectatorQuestionLog';
+import { TurnTimer } from './TurnTimer';
 
 function noop() {
   // Spectators can't ask questions; QuestionBoard just needs a handler to satisfy its props.
@@ -15,6 +16,7 @@ export function SpectatorBoard({ view }: { view: SpectatorView }) {
     <div className="page-container">
       <RulesPanel />
       <div className="turn-indicator">観戦中: {turnName} の番です</div>
+      <TurnTimer turnStartedAt={view.turnStartedAt} />
 
       {!view.firstConnected && <div className="error-banner">{view.firstName} が切断中です。</div>}
       {!view.secondConnected && <div className="error-banner">{view.secondName} が切断中です。</div>}
